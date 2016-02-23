@@ -13,8 +13,8 @@ import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
  
@@ -29,16 +29,17 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 public class AppTest {
     
 
+private static final String HTTP_LOCALHOST = "http://localhost:8888/";
 @Autowired
 private WebApplicationContext webApplicationContext;
 
- //   @Test
+    @Test
     public void homepageTest(){
     	//given
     	RestTemplate restTemplate = new RestTemplate();
     	
     	//when
-    	String string = restTemplate.getForObject("http://localhost:8888/", String.class);
+    	String string = restTemplate.getForObject(HTTP_LOCALHOST, String.class);
     	
     	//then
     	assertEquals("let's.",string);
@@ -48,7 +49,7 @@ private WebApplicationContext webApplicationContext;
     }
 
 @Test
-public void restMockMvcTest() throws Exception{
+public void restMockMvcHomepageTest() throws Exception{
 	MockMvc mockMvc = webAppContextSetup(webApplicationContext).build(); 
 	mockMvc.perform(get("")).andExpect(status().isOk())
 	.andExpect(content().string("let's."))
@@ -58,11 +59,12 @@ public void restMockMvcTest() throws Exception{
 
 
 @Test
-public void restAloneTest() throws Exception{
-	MockMvc mockMvc = MockMvcBuilders.standaloneSetup(webApplicationContext).build(); 
-	mockMvc.perform(get("")).andExpect(status().isOk())
-	.andExpect(content().string("let's."))
-	.andExpect(content().contentType("text/plain;charset=UTF-8"));
+public void restGetZahl(){
+	
+	RestTemplate restTemplate = new RestTemplate();
+	Integer inti = restTemplate.getForObject(HTTP_LOCALHOST +"zahl", Integer.class);
+	
+	assertEquals(new Integer(2), inti);
 
 }
 

@@ -10,4 +10,9 @@ public class RestController {
 		System.out.println("rest hello");
 	}
 	
+	
+	@RequestMapping("/zahl")
+	public Integer getZahl(){
+		return 2;
+	}
 }
