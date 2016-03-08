@@ -1,22 +1,27 @@
 package de.holger.springRest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
  
 
 /**
@@ -29,9 +34,19 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 public class AppTest {
     
 
-private static final String HTTP_LOCALHOST = "http://localhost:8888/";
+private static final String HTTP_LOCALHOST = "http://localhost:8090/";
 @Autowired
 private WebApplicationContext webApplicationContext;
+
+private RestTemplate restTemplate;
+private MockRestServiceServer mockServer;
+
+@Before
+public void setUp() {
+	restTemplate = new RestTemplate();
+ 
+	mockServer = MockRestServiceServer.createServer(restTemplate);
+}
 
     @Test
     public void homepageTest(){
@@ -55,6 +70,25 @@ public void restMockMvcHomepageTest() throws Exception{
 	.andExpect(content().string("let's."))
 	.andExpect(content().contentType("text/plain;charset=UTF-8"));
 
+}
+
+@Test
+public void restMockRestServiceServerTest()   {
+	//Given
+ 
+	
+	mockServer
+		.expect(requestTo(""))
+		.andExpect(method(HttpMethod.GET))
+		// Der Response wird ausgemockt, deshalb erzeugen wir hier einen Dummy-Response
+		.andRespond(withSuccess("test", MediaType.APPLICATION_JSON));
+			
+	//When
+	String str = restTemplate.getForObject("", String.class);
+	
+	//Then	
+	assertEquals("was",str);
+	mockServer.verify();
 }
 
 

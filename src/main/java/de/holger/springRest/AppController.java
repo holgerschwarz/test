@@ -15,8 +15,8 @@ import de.holger.springRest.RestClient.RestClientI;
 public class AppController {
 
 	
-	//@Autowired
-	//private  RestClientI  restClient;
+ 
+	private  RestClientI  restClient;
 	
 	@SuppressWarnings("resource")
 	private void controllerOhneBean(){
@@ -34,10 +34,18 @@ public class AppController {
 		System.out.println("zahl = " + i);
 	}
 	
+	private void controllerMitBean(){
+ 
+        
+        Integer i = restClient.getZahl();
+	
+	System.out.println("zahl = " + i);
+}
+	
     public static void main( String[] args ) {
     	
     	AppController appController = new AppController();
-    	appController.controllerOhneBean();
+    	appController.controllerMitBean();
 		
 	}
 }
